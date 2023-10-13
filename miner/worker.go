@@ -17,6 +17,7 @@
 package miner
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -774,7 +775,7 @@ func (w *worker) resultLoop() {
 				log.Error("Failed writing block to chain", "err", err)
 				continue
 			}
-			log.Info("Successfully sealed new block", "number", block.Number(), "sealhash", sealhash, "hash", hash,
+			log.Info("Successfully sealed new block", "number", block.Number(), "nonceHash", hex.EncodeToString(block.Header().Nonce.Hash()), "sealhash", hex.EncodeToString(sealhash[:]), "hash", hash,
 				"elapsed", common.PrettyDuration(time.Since(task.createdAt)))
 
 			// Broadcast the block and announce chain insertion event

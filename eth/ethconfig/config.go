@@ -20,7 +20,6 @@ package ethconfig
 import (
 	"os"
 	"os/user"
-	"path/filepath"
 	"runtime"
 	"time"
 
@@ -62,16 +61,8 @@ var LightClientGPO = gasprice.Config{
 
 // Defaults contains default settings for use on the Ethereum main net.
 var Defaults = Config{
-	SyncMode: downloader.SnapSync,
-	Ethash: ethash.Config{
-		CacheDir:         "ethash",
-		CachesInMem:      2,
-		CachesOnDisk:     3,
-		CachesLockMmap:   false,
-		DatasetsInMem:    1,
-		DatasetsOnDisk:   2,
-		DatasetsLockMmap: false,
-	},
+	SyncMode:                downloader.SnapSync,
+	Ethash:                  ethash.Config{},
 	NetworkId:               1,
 	TxLookupLimit:           2350000,
 	LightPeers:              100,
@@ -100,16 +91,15 @@ func init() {
 		}
 	}
 	if runtime.GOOS == "darwin" {
-		Defaults.Ethash.DatasetDir = filepath.Join(home, "Library", "Ethash")
 	} else if runtime.GOOS == "windows" {
 		localappdata := os.Getenv("LOCALAPPDATA")
 		if localappdata != "" {
-			Defaults.Ethash.DatasetDir = filepath.Join(localappdata, "Ethash")
+
 		} else {
-			Defaults.Ethash.DatasetDir = filepath.Join(home, "AppData", "Local", "Ethash")
+
 		}
 	} else {
-		Defaults.Ethash.DatasetDir = filepath.Join(home, ".ethash")
+
 	}
 }
 
@@ -225,18 +215,10 @@ func CreateConsensusEngine(stack *node.Node, ethashConfig *ethash.Config, clique
 			log.Warn("Ethash used in shared mode")
 		}
 		engine = ethash.New(ethash.Config{
-			PowMode:          ethashConfig.PowMode,
-			CacheDir:         stack.ResolvePath(ethashConfig.CacheDir),
-			CachesInMem:      ethashConfig.CachesInMem,
-			CachesOnDisk:     ethashConfig.CachesOnDisk,
-			CachesLockMmap:   ethashConfig.CachesLockMmap,
-			DatasetDir:       ethashConfig.DatasetDir,
-			DatasetsInMem:    ethashConfig.DatasetsInMem,
-			DatasetsOnDisk:   ethashConfig.DatasetsOnDisk,
-			DatasetsLockMmap: ethashConfig.DatasetsLockMmap,
-			NotifyFull:       ethashConfig.NotifyFull,
+			PowMode:    ethashConfig.PowMode,
+			NotifyFull: ethashConfig.NotifyFull,
 		}, notify, noverify)
-		engine.(*ethash.Ethash).SetThreads(-1) // Disable CPU mining
+		engine.(*ethash.Hmhash).SetThreads(-1) // Disable CPU mining
 	}
 	return beacon.New(engine)
 }

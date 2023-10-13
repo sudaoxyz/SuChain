@@ -20,11 +20,8 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/internal/version"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/urfave/cli/v2"
@@ -98,30 +95,11 @@ and displays information about any security vulnerabilities that affect the curr
 
 // makecache generates an ethash verification cache into the provided folder.
 func makecache(ctx *cli.Context) error {
-	args := ctx.Args().Slice()
-	if len(args) != 2 {
-		utils.Fatalf(`Usage: geth makecache <block number> <outputdir>`)
-	}
-	block, err := strconv.ParseUint(args[0], 0, 64)
-	if err != nil {
-		utils.Fatalf("Invalid block number: %v", err)
-	}
-	ethash.MakeCache(block, args[1])
-
 	return nil
 }
 
 // makedag generates an ethash mining DAG into the provided folder.
 func makedag(ctx *cli.Context) error {
-	args := ctx.Args().Slice()
-	if len(args) != 2 {
-		utils.Fatalf(`Usage: geth makedag <block number> <outputdir>`)
-	}
-	block, err := strconv.ParseUint(args[0], 0, 64)
-	if err != nil {
-		utils.Fatalf("Invalid block number: %v", err)
-	}
-	ethash.MakeDataset(block, args[1])
 
 	return nil
 }

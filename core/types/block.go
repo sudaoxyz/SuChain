@@ -18,6 +18,7 @@
 package types
 
 import (
+	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -46,6 +47,12 @@ func EncodeNonce(i uint64) BlockNonce {
 // Uint64 returns the integer value of a block nonce.
 func (n BlockNonce) Uint64() uint64 {
 	return binary.BigEndian.Uint64(n[:])
+}
+
+// Hash returns the bytes value of a block nonce.
+func (n BlockNonce) Hash() []byte {
+	nonceHash := sha256.Sum256(n[:])
+	return nonceHash[:]
 }
 
 // MarshalText encodes n as a hex string with 0x prefix.

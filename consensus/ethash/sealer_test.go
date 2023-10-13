@@ -49,18 +49,18 @@ func TestRemoteNotify(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create the custom ethash engine.
-	ethash := NewTester([]string{server.URL}, false)
-	defer ethash.Close()
+	// Create the custom hmhash engine.
+	hmhash := NewTester([]string{server.URL}, false)
+	defer hmhash.Close()
 
 	// Stream a work task and ensure the notification bubbles out.
 	header := &types.Header{Number: big.NewInt(1), Difficulty: big.NewInt(100)}
 	block := types.NewBlockWithHeader(header)
 
-	ethash.Seal(nil, block, nil, nil)
+	hmhash.Seal(nil, block, nil, nil)
 	select {
 	case work := <-sink:
-		if want := ethash.SealHash(header).Hex(); work[0] != want {
+		if want := hmhash.SealHash(header).Hex(); work[0] != want {
 			t.Errorf("work packet hash mismatch: have %s, want %s", work[0], want)
 		}
 		if want := common.BytesToHash(SeedHash(header.Number.Uint64())).Hex(); work[1] != want {
@@ -92,20 +92,20 @@ func TestRemoteNotifyFull(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create the custom ethash engine.
+	// Create the custom hmhash engine.
 	config := Config{
 		PowMode:    ModeTest,
 		NotifyFull: true,
 		Log:        testlog.Logger(t, log.LvlWarn),
 	}
-	ethash := New(config, []string{server.URL}, false)
-	defer ethash.Close()
+	hmhash := New(config, []string{server.URL}, false)
+	defer hmhash.Close()
 
 	// Stream a work task and ensure the notification bubbles out.
 	header := &types.Header{Number: big.NewInt(1), Difficulty: big.NewInt(100)}
 	block := types.NewBlockWithHeader(header)
 
-	ethash.Seal(nil, block, nil, nil)
+	hmhash.Seal(nil, block, nil, nil)
 	select {
 	case work := <-sink:
 		if want := "0x" + strconv.FormatUint(header.Number.Uint64(), 16); work["number"] != want {
@@ -137,10 +137,10 @@ func TestRemoteMultiNotify(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create the custom ethash engine.
-	ethash := NewTester([]string{server.URL}, false)
-	ethash.config.Log = testlog.Logger(t, log.LvlWarn)
-	defer ethash.Close()
+	// Create the custom hmhash engine.
+	hmhash := NewTester([]string{server.URL}, false)
+	hmhash.config.Log = testlog.Logger(t, log.LvlWarn)
+	defer hmhash.Close()
 
 	// Provide a results reader.
 	// Otherwise the unread results will be logged asynchronously
@@ -151,7 +151,7 @@ func TestRemoteMultiNotify(t *testing.T) {
 	for i := 0; i < cap(sink); i++ {
 		header := &types.Header{Number: big.NewInt(int64(i)), Difficulty: big.NewInt(100)}
 		block := types.NewBlockWithHeader(header)
-		ethash.Seal(nil, block, results, nil)
+		hmhash.Seal(nil, block, results, nil)
 	}
 
 	for i := 0; i < cap(sink); i++ {
@@ -182,14 +182,14 @@ func TestRemoteMultiNotifyFull(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create the custom ethash engine.
+	// Create the custom hmhash engine.
 	config := Config{
 		PowMode:    ModeTest,
 		NotifyFull: true,
 		Log:        testlog.Logger(t, log.LvlWarn),
 	}
-	ethash := New(config, []string{server.URL}, false)
-	defer ethash.Close()
+	hmhash := New(config, []string{server.URL}, false)
+	defer hmhash.Close()
 
 	// Provide a results reader.
 	// Otherwise the unread results will be logged asynchronously
@@ -200,7 +200,7 @@ func TestRemoteMultiNotifyFull(t *testing.T) {
 	for i := 0; i < cap(sink); i++ {
 		header := &types.Header{Number: big.NewInt(int64(i)), Difficulty: big.NewInt(100)}
 		block := types.NewBlockWithHeader(header)
-		ethash.Seal(nil, block, results, nil)
+		hmhash.Seal(nil, block, results, nil)
 	}
 
 	for i := 0; i < cap(sink); i++ {
@@ -215,9 +215,9 @@ func TestRemoteMultiNotifyFull(t *testing.T) {
 
 // Tests whether stale solutions are correctly processed.
 func TestStaleSubmission(t *testing.T) {
-	ethash := NewTester(nil, true)
-	defer ethash.Close()
-	api := &API{ethash}
+	hmhash := NewTester(nil, true)
+	defer hmhash.Close()
+	api := &API{hmhash}
 
 	fakeNonce, fakeDigest := types.BlockNonce{0x01, 0x02, 0x03}, common.HexToHash("deadbeef")
 
@@ -266,9 +266,9 @@ func TestStaleSubmission(t *testing.T) {
 
 	for id, c := range testcases {
 		for _, h := range c.headers {
-			ethash.Seal(nil, types.NewBlockWithHeader(h), results, nil)
+			hmhash.Seal(nil, types.NewBlockWithHeader(h), results, nil)
 		}
-		if res := api.SubmitWork(fakeNonce, ethash.SealHash(c.headers[c.submitIndex]), fakeDigest); res != c.submitRes {
+		if res := api.SubmitWork(fakeNonce, hmhash.SealHash(c.headers[c.submitIndex]), fakeDigest); res != c.submitRes {
 			t.Errorf("case %d submit result mismatch, want %t, get %t", id+1, c.submitRes, res)
 		}
 		if !c.submitRes {
@@ -292,7 +292,7 @@ func TestStaleSubmission(t *testing.T) {
 				t.Errorf("case %d block parent hash mismatch, want %s, get %s", id+1, c.headers[c.submitIndex].ParentHash.Hex(), res.Header().ParentHash.Hex())
 			}
 		case <-time.NewTimer(time.Second).C:
-			t.Errorf("case %d fetch ethash result timeout", id+1)
+			t.Errorf("case %d fetch hmhash result timeout", id+1)
 		}
 	}
 }
