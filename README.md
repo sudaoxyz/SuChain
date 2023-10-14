@@ -1,16 +1,22 @@
-## Go Ethereum
+## SuChain
 
-Official Golang execution layer implementation of the Ethereum protocol.
+
+
+Official Golang execution layer implementation of the HashHarmony protocol.
+
+HashHarmony是基于比特币共识算法修改，改动如下：
+
+|     Chain     | CheckNonce                                     |
+|:-------------:|------------------------------------------------|
+| **`Bitcoin`** | DoubleHash(header, nonce) < targetDifficulty   |
+|   `SuChain`   | Hash(header) ^ Hash(nonce) < targetDifficulty  |
+
 
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
 )](https://pkg.go.dev/github.com/ethereum/go-ethereum?tab=doc)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ethereum/go-ethereum)](https://goreportcard.com/report/github.com/ethereum/go-ethereum)
-[![Travis](https://travis-ci.com/ethereum/go-ethereum.svg?branch=master)](https://travis-ci.com/ethereum/go-ethereum)
-[![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/nthXNEv)
-
-Automated builds are available for stable releases and the unstable master branch. Binary
-archives are published at https://geth.ethereum.org/downloads/.
+[![Go Report Card](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)
+[![Travis](https://travis-ci.com/sudaoxyz/SuChain.svg?branch=master)](https://travis-ci.com/sudaoxyz/SuChain)
 
 ## Building the source
 
@@ -31,7 +37,7 @@ make all
 
 ## Executables
 
-The go-ethereum project comes with several wrappers/executables found in the `cmd`
+The SuChain project comes with several wrappers/executables found in the `cmd`
 directory.
 
 |  Command   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -329,12 +335,8 @@ transactions are accepted at (`--miner.gasprice`).
 Thank you for considering helping out with the source code! We welcome contributions
 from anyone on the internet, and are grateful for even the smallest of fixes!
 
-If you'd like to contribute to go-ethereum, please fork, fix, commit and send a pull request
-for the maintainers to review and merge into the main code base. If you wish to submit
-more complex changes though, please check up with the core devs first on [our Discord Server](https://discord.gg/invite/nthXNEv)
-to ensure those changes are in line with the general philosophy of the project and/or get
-some early feedback which can make both your efforts much lighter as well as our review
-and merge procedures quick and simple.
+If you'd like to contribute to SuChain, please fork, fix, commit and send a pull request
+for the maintainers to review and merge into the main code base. 
 
 Please make sure your contributions adhere to our coding guidelines:
 
@@ -350,18 +352,12 @@ Please see the [Developers' Guide](https://geth.ethereum.org/docs/developers/get
 for more details on configuring your environment, managing project dependencies, and
 testing procedures.
 
-### Contributing to geth.ethereum.org
-
-For contributions to the [go-ethereum website](https://geth.ethereum.org), please checkout and raise pull requests against the `website` branch.
-For more detailed instructions please see the `website` branch [README](https://github.com/ethereum/go-ethereum/tree/website#readme) or the 
-[contributing](https://geth.ethereum.org/docs/developers/geth-developer/contributing) page of the website.
-
 ## License
 
-The go-ethereum library (i.e. all code outside of the `cmd` directory) is licensed under the
+The SuChain library (i.e. all code outside of the `cmd` directory) is licensed under the
 [GNU Lesser General Public License v3.0](https://www.gnu.org/licenses/lgpl-3.0.en.html),
 also included in our repository in the `COPYING.LESSER` file.
 
-The go-ethereum binaries (i.e. all code inside of the `cmd` directory) are licensed under the
+The SuChain binaries (i.e. all code inside of the `cmd` directory) are licensed under the
 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html), also
 included in our repository in the `COPYING` file.
