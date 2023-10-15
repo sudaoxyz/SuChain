@@ -1,22 +1,35 @@
 ## SuChain
-
-
+[![API Reference](
+https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
+)](https://pkg.go.dev/github.com/ethereum/go-ethereum?tab=doc)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)
+[![Travis](https://travis-ci.com/sudaoxyz/SuChain.svg?branch=master)](https://travis-ci.com/sudaoxyz/SuChain)  
 
 Official Golang execution layer implementation of the HashHarmony protocol.
 
 HashHarmony是基于比特币共识算法修改，改动如下：
 
-|     Chain     | CheckNonce                                     |
-|:-------------:|------------------------------------------------|
-| **`Bitcoin`** | DoubleHash(header, nonce) < targetDifficulty   |
-|   `SuChain`   | Hash(header) ^ Hash(nonce) < targetDifficulty  |
+|     Chain     | CheckNonce                                   |
+|:-------------:|----------------------------------------------|
+| **`Bitcoin`** | DoubleHash(header, nonce) < targetDifficulty |
+| **`SuChain`** | Hash(header)⊕Hash(nonce) < targetDifficulty  |
 
+>测试网genesis.json见/suchain目录
 
-[![API Reference](
-https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
-)](https://pkg.go.dev/github.com/ethereum/go-ethereum?tab=doc)
-[![Go Report Card](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)](https://goreportcard.com/badge/github.com/sudaoxyz/SuChain)
-[![Travis](https://travis-ci.com/sudaoxyz/SuChain.svg?branch=master)](https://travis-ci.com/sudaoxyz/SuChain)
+## 为什么选择HashHarmony？
+### 传统PoW的问题
+以比特币为例，在比特币挖矿时，每一次Hash都需要区块数据的参与，从而使矿工产生的hash只能用于比特币（其他pow公链亦如此），这样会有什么问题呢？
+1. Pow的能源消耗问题客观存在。并且新的pow公链需要新的矿工，进一步增加消耗。
+2. 山寨链和硬分叉可能分散算力，降低安全性。
+3. 短期创建一条算力相当的pow公链非常困难，需要缓慢地发展矿工。
+
+### HashHarmony的解决方案
+由于在寻找和校验nonce时，只需要一个nonce的范围要求，所以这个算法会非常通用。基于这个通用的算法可实现算力共享。
+>Suchain允许与其他采用相同共识的链共享算力。这种互助的模式增强了网络的安全性，并使得新的链可以迅速获得足够的算力支持。未来，开发者和用户可以在suchain上通过智能合约发布hash运算任务。找到任务答案的矿工可以提交结果来获得奖励，这意味着普通用户和企业可以轻松获得suchain的全网算力，为特定计算(sha256)需求提供支持。
+
+### 未来展望-快速打造安全的PoW公链
+随着数字化和去中心化技术的普及，未来可能会有更多的短期或临时性的活动需要一个安全、去中心化的公链来支持。在这种背景下，HashHarmony为suchain提供了一个强大的基础，使其能够迅速部署并满足这些需求。
+活动结束后，可以轻松地移除算力，弃掉临时链，确保数据的隐私和安全性。同时，如果活动或项目需要继续，该链也可以轻松转变为长期链。
 
 ## Building the source
 
