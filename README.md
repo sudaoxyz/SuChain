@@ -9,27 +9,33 @@ Official Golang execution layer implementation of the HashHarmony protocol.
 
 HashHarmony是基于比特币共识算法修改，改动如下：
 
-|     Chain     | CheckNonce                                   |
-|:-------------:|----------------------------------------------|
-| **`Bitcoin`** | DoubleHash(header, nonce) < targetDifficulty |
-| **`SuChain`** | Hash(header)⊕Hash(nonce) < targetDifficulty  |
+|         Chain          | CheckNonce                                               |
+|:----------------------:|----------------------------------------------------------|
+|     **`Bitcoin`**      | Hash(header, nonce) < targetDifficulty                   |
+|     **`SuChain`**      | Hash(header,nonce1)⊕Hash(slot,nonce2) < targetDifficulty |
+|  **`SuChain-Layer2`**  | Hash(header, nonce) < targetDifficulty                   |
 
 >测试网genesis.json见/suchain目录
 
 ## 为什么选择HashHarmony？
 ### 传统PoW的问题
-以比特币为例，在比特币挖矿时，每一次Hash都需要区块数据的参与，从而使矿工产生的hash只能用于比特币（其他pow公链亦如此），这样会有什么问题呢？
-1. Pow的能源消耗问题客观存在。并且新的pow公链需要新的矿工，进一步增加消耗。
-2. 山寨链和硬分叉可能分散算力，降低安全性。
-3. 短期创建一条算力相当的pow公链非常困难，需要缓慢地发展矿工。
+以比特币为例，在比特币挖矿时，每一次Hash都需要区块数据的参与，从而使矿工产生的hash只能用于比特币（其他pow公链亦如此），因此算力没有任何其他再利用的可能，新的PoW公链需要新的矿工，进一步增加消耗。
 
-### HashHarmony的解决方案
-由于在寻找和校验nonce时，只需要一个nonce的范围要求，所以这个算法会非常通用。基于这个通用的算法可实现算力共享。
->Suchain允许与其他采用相同共识的链共享算力。这种互助的模式增强了网络的安全性，并使得新的链可以迅速获得足够的算力支持。未来，开发者和用户可以在suchain上通过智能合约发布hash运算任务。找到任务答案的矿工可以提交结果来获得奖励，这意味着普通用户和企业可以轻松获得suchain的全网算力，为特定计算(sha256)需求提供支持。
+### HashHarmony的挖矿算法
+矿工需要找到两个不同的nonce值，以满足 Hash(header,nonce1)⊕Hash(slot,nonce2) < targetDifficulty。
+> 1. **slot**可以是任意的自定义数据，预留为Layer2（包括比特币）的**插槽**。  
+> 2. 从生日悖论问题中可知，矿工最佳挖矿策略是先计算大量的Hash(header,nonce1)数据集，然后再计算Hash(slot,nonce2)数据集，最后在两个数据集中找到匹配的nonce1和nonce2。
+
+### 插槽的作用
+假如**slot**为比特币待挖区块的**header**，则可以将Hash(slot,nonce2)的计算结果与比特币的targetDifficulty比较，若满足可在比特币链上出块。  
+同理，通过把layer2的**header**放入**slot**，可为layer2出块。
+> 说明：通过slot并不能获取到SuChain矿工的全部算力，因为会有一部分算力用于计算Hash(header,nonce1)数据集，这部分的计算结果不能共享。
+### 其他潜在的优势（待讨论）
+>为了实现“生日攻击”，需要准备较大的数据集，这也许能增加大内存设备的挖矿速度，削弱asic的优势。
 
 ### 未来展望-快速打造安全的PoW公链
-随着数字化和去中心化技术的普及，未来可能会有更多的短期或临时性的活动需要一个安全、去中心化的公链来支持。在这种背景下，HashHarmony为suchain提供了一个强大的基础，使其能够迅速部署并满足这些需求。
-活动结束后，可以轻松地移除算力，弃掉临时链，确保数据的隐私和安全性。同时，如果活动或项目需要继续，该链也可以轻松转变为长期链。
+随着数字化和去中心化技术的普及，未来可能会有更多的短期或临时性的活动需要一个安全、去中心化的公链来支持。在这种背景下，HashHarmony为SuChain提供了一个可能性，使其能够通过SuChain-Layer2迅速部署并满足这些需求。
+活动结束后，可以轻松地移除算力，弃掉临时链，确保数据的隐私和安全性。
 
 ## Building the source
 
